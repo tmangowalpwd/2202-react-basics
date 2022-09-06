@@ -16,6 +16,7 @@ import {
   FormErrorMessage,
   InputGroup,
   InputRightElement,
+  useToast,
 } from "@chakra-ui/react"
 import { useFormik } from "formik"
 import { useState } from "react"
@@ -26,6 +27,7 @@ const EmployeeList = () => {
   const [showPassword, setShowPassword] = useState(false)
   const employeeSelector = useSelector((state) => state.employee)
   const dispatch = useDispatch()
+  const toast = useToast()
 
   const renderEmployees = () => {
     return employeeSelector.data.map((val) => {
@@ -52,6 +54,33 @@ const EmployeeList = () => {
       email: "",
       password: "",
     },
+    onSubmit: (values) => {
+      for (let i = 0; i < employeeSelector.data.length; i++) {
+        let employee = employeeSelector.data[i]
+
+        if (employee.email === values.email) {
+          if (employee.password !== values.password) {
+            toast({
+              status: "error",
+              title: "Wrong password",
+            })
+            return
+          }
+
+          dispatch(loginEmployee(employee))
+          toast({
+            status: "success",
+            title: "Login success",
+          })
+          return
+        }
+      }
+
+      toast({
+        status: "error",
+        title: "User with email does not exist",
+      })
+    },
   })
 
   const handleFormChange = ({ target }) => {
@@ -61,57 +90,53 @@ const EmployeeList = () => {
 
   return (
     <Container maxW="container.lg" py="16">
-      {/* 
-        1. Fitur login. Email dan password harus sesuai. Gunakan global
-           state untuk perbandingan data, tanpa network call tambahan.
-        2. Kalau login berhasil, tampilkan data di navbar. Tampilkan toast
-           (success)
-        3. Kalau login gagal, tampilkan message dengan case ini:
-          a. email tidak ditemukan, input email menjadi merah dengan message
-             "User with email does not exist". Lalu tampilkan toast (error)
-          b. password salah, input password menjadi merah dengan message
-             "Wrong password". Lalu tampilkan toast (error).
-        4. Buat button di navbar untuk LOGOUT
-      */}
       <Box p="8" mb="8" borderRadius="6px" border="solid 1px lightgrey">
         <Text fontWeight="bold" fontSize="4xl" mb="8">
           Login Employee
         </Text>
-        <Stack>
-          <FormControl isInvalid={formik.errors.email}>
-            <FormLabel>Email</FormLabel>
-            <Input
-              autoComplete="off"
-              value={formik.values.email}
-              onChange={handleFormChange}
-              name="email"
-              type="email"
-            />
-            <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={formik.errors.password}>
-            <FormLabel>Password</FormLabel>
-            <InputGroup>
+        <form onSubmit={formik.handleSubmit}>
+          <Stack>
+            <FormControl isInvalid={formik.errors.email}>
+              <FormLabel>Email</FormLabel>
               <Input
-                value={formik.values.password}
+                autoComplete="off"
+                value={formik.values.email}
                 onChange={handleFormChange}
-                name="password"
-                type={showPassword ? "text" : "password"}
+                name="email"
+                type="email"
               />
-              <InputRightElement width="4.5rem">
-                <Button
-                  h="1.75rem"
-                  size="sm"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? "Hide" : "Show"}
-                </Button>
-              </InputRightElement>
-            </InputGroup>
-            <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
-          </FormControl>
-          <Button colorScheme="green">Login</Button>
-        </Stack>
+              <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
+            </FormControl>
+            <FormControl isInvalid={formik.errors.password}>
+              <FormLabel>Password</FormLabel>
+              <InputGroup>
+                <Input
+                  value={formik.values.password}
+                  onChange={handleFormChange}
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                />
+                <InputRightElement width="4.5rem">
+                  <Button
+                    h="1.75rem"
+                    size="sm"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+              <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
+            </FormControl>
+            <Button
+              type="submit"
+              onClick={formik.handleSubmit}
+              colorScheme="green"
+            >
+              Login
+            </Button>
+          </Stack>
+        </form>
       </Box>
       <Table>
         <Thead>
