@@ -6,7 +6,14 @@ import Counter from "./pages/Counter"
 import TextPage from "./pages/Text"
 import List from "./pages/List"
 import Filter from "./pages/Filter"
-import { Text, UnorderedList, ListItem, Box, HStack } from "@chakra-ui/react"
+import {
+  Text,
+  UnorderedList,
+  ListItem,
+  Box,
+  HStack,
+  Button,
+} from "@chakra-ui/react"
 import Register from "./pages/Register"
 import ReduxCounter from "./pages/ReduxCounter"
 import { useDispatch, useSelector } from "react-redux"
@@ -17,9 +24,11 @@ import ProductEdit from "./pages/ProductEdit"
 import EmployeeRegister from "./pages/EmployeeRegister"
 import EmployeeList from "./pages/EmployeeList"
 import { jsonServerApi } from "./api"
-import { fillEmployeeList } from "./features/employee/employeeSlice"
+import {
+  fillEmployeeList,
+  logoutEmployee,
+} from "./features/employee/employeeSlice"
 import { useEffect } from "react"
-import { increment } from "./features/counter/counterSlice"
 
 function App() {
   const employeeSelector = useSelector((state) => state.employee)
@@ -35,6 +44,10 @@ function App() {
       console.log(err)
       alert("Server error")
     }
+  }
+
+  const logoutBtnHandler = () => {
+    dispatch(logoutEmployee())
   }
 
   useEffect(() => {
@@ -61,6 +74,10 @@ function App() {
             <Text>Password: {employeeSelector.currentEmployee.password}</Text>
           </Box>
         </HStack>
+
+        <Button onClick={logoutBtnHandler} colorScheme="red">
+          Logout
+        </Button>
       </Box>
       <Routes>
         <Route path="/" element={<Home />} />

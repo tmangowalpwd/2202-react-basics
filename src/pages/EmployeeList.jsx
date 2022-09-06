@@ -128,11 +128,7 @@ const EmployeeList = () => {
               </InputGroup>
               <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
             </FormControl>
-            <Button
-              type="submit"
-              onClick={formik.handleSubmit}
-              colorScheme="green"
-            >
+            <Button type="submit" colorScheme="green">
               Login
             </Button>
           </Stack>

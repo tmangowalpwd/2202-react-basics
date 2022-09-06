@@ -24,13 +24,17 @@ export const employeeSlice = createSlice({
         name,
         email,
         password,
-        id
+        id,
       }
-    }
+    },
+    logoutEmployee: (state) => {
+      state.currentEmployee = { ...initialState.currentEmployee }
+    },
   },
 })
 
-export const { fillEmployeeList, loginEmployee } = employeeSlice.actions
+export const { fillEmployeeList, loginEmployee, logoutEmployee } =
+  employeeSlice.actions
 
 export default employeeSlice.reducer
 
